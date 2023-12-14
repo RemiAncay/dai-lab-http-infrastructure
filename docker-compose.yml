@@ -1,0 +1,6 @@
+services:
+  static-server:
+    image: static-html-nginx
+    build: ./Static-server
+    ports:
+      - "8080:80"
