@@ -18,7 +18,12 @@ We created a simple `docker-compose.yml` file that builds our `static-html-nginx
 We can build our infrastructure using `docker compose build` and start it using : `docker compose up` and stop it using `docker compose down` from a terminal opened in the root directory.
 
 ## Step 3
-todo
+
+
+
+### API Dockerfile
+The Dockerfile downloads the `alpine:latest` image, copies the `.jar` from our `target/` folder in the image and runs it using `java -jar app.jar`. In order for the image to run, the API has to be built before running the image, using the `mvn clean package` command.
+
 ## Step 4
 todo
 ## Step 5
