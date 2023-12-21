@@ -19,10 +19,19 @@ We can build our infrastructure using `docker compose build` and start it using 
 
 ## Step 3
 
-
-
 ### API Dockerfile
 The Dockerfile downloads the `alpine:latest` image, copies the `.jar` from our `target/` folder in the image and runs it using `java -jar app.jar`. In order for the image to run, the API has to be built before running the image, using the `mvn clean package` command.
+
+### Add dependencies
+````
+io.javalin:javalin:5.6.3
+org.slf4j:slf4j-simple:2.0.7
+com.fasterxml.jackson.core:jackson-databind:2.15.1
+````
+
+
+### Spec
+....
 
 ## Step 4
 todo
