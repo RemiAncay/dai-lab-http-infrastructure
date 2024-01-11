@@ -4,3 +4,9 @@ services:
     build: ./Static-server
     ports:
       - "8080:80"
+
+  foosball-api:
+    image: foosball-api
+    build: ./foosball-api
+    ports:
+      - "7000:7000"
