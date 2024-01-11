@@ -9,8 +9,8 @@ public class MatchController {
     private List<Match> matches = new ArrayList<>();
 
     MatchController() {
-        matches.add(new Match("1", "2020-01-01", "New York", "John Doe", "Jane Doe", "John Doe"));
-        matches.add(new Match("2", "2020-01-02", "Paris", "John Doe", "Jane Doe", "Jane Doe"));
+        matches.add(new Match("1", "2020-01-01", "Las Vegas", "Tony Spredeman", "Ryan Moore", "Tony Spredeman"));
+        matches.add(new Match("2", "2024-01-11", "Chillout, HEIG-VD", "Lucas Charbonnier", "Rémi Ançay", "Rémi Ançay"));
     }
 
     // Matches CRUD Operations

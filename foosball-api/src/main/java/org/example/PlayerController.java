@@ -10,8 +10,10 @@ public class PlayerController {
     private Map<String, Player> players = new HashMap<>();
 
     PlayerController() {
-        players.put("1", new Player("1", "John Doe", "1990-01-01"));
-        players.put("2", new Player("2", "Jane Doe", "1990-01-01"));
+        players.put("1", new Player("1", "Tony Spredeman", "1984-09-19"));
+        players.put("2", new Player("2", "Ryan Moore", "1986-08-23"));
+        players.put("3", new Player("3", "Rémi Ançay", "2000-10-06"));
+        players.put("4", new Player("4", "Lucas Charbonnier", "2001-04-13"));
     }
 
     // Players CRUD Operations

@@ -8,6 +8,8 @@ public class Match {
     private String player2Name;
     private String winner;
 
+    public Match() {}
+
     Match(String id, String date, String place, String player1Name, String player2Name, String winner) {
         this.id = id;
         this.date = date;

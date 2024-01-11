@@ -5,6 +5,8 @@ public class Player {
     private String name;
     private String dateOfBirth;
 
+    Player() {}
+
     Player(String id, String name, String dateOfBirth) {
         this.id = id;
         this.name = name;
@@ -36,5 +38,4 @@ public class Player {
     public void setDateOfBirth(String dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
-
 }
