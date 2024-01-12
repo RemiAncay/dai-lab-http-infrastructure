@@ -25,6 +25,20 @@ A singles match has the following attributes :
 - **winner** of the match
 
 ## Data storage
-To avoid making our infrastructure more complex and because this is just a lab, we decided to not use a SQL database to store the data. Instead, we will store all the data in a JSON file that will be serialized (read) and deserialized (written) when the API starts and stop.
+To avoid making our infrastructure more complex and because this is just a lab, we decided to not store the data.
 
-In a real-world scenario, it would be preferable to use a database as it is more reliable than a simple file and allows the use of SQL requests. 
+But if the project was to be used in a real-world scenario, it would be preferable to use a database as it is more reliable than a simple file and allows the use of SQL requests.
+
+## API routes
+Players:
+- `GET /api/players` : get all players
+- `GET /api/players/:id` : get a player by id
+- `POST /api/players` : create a player
+- `PUT /api/players/:id` : update a player
+- `DELETE /api/players/:id` : delete a player
+
+Matches:
+- `GET /api/matches` : get all matches
+- `GET /api/matches/:id` : get a match by id
+- `POST /api/matches` : create a match
+- `DELETE /api/matches/:id` : delete a match
