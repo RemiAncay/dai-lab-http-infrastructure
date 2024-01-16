@@ -1,0 +1,23 @@
+# Enable Docker as a provider
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+
+# Define entrypoints for http and https
+entryPoints:
+  http:
+    address: ":80"
+  https:
+    address: ":443"
+
+# Enable TLS configuration
+tls:
+  certificates:
+  - certFile: "/etc/traefik/certificates/cert.pem"
+    keyFile: "/etc/traefik/certificates/key.pem"
+
+# Enable API dashboard
+api:
+  insecure: true
+  dashboard: true
