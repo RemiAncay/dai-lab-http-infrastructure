@@ -89,8 +89,32 @@ services:
 ```
 
 ## Step 5
-todo
+
+Traefik will by default detect if multiple instances of a service are running. In order to run multiple instances of the same service, you need to set the "replicas" tag the docker-compose to the number of your choice :
+
+todo add replicas config
+
+You can also specify the number of instances of each service when running the `--scale` parameter in the `docker compose up` command :
+
+```docker compose -d --scale static-server=3```
+
+In order to add another server while the container is running, you can just run that command again with a different `--scale` parameter. This way, the container doesn't need to be stopped to add new instances.
+
+The load balancing between the running instances is done automatically by Traefik. When we try to access our website, docker prints the HTTP request in the console and we can see that it's a **round-robin** between the running instances. 
+
 ## Step 6
-todo
+
+Our API does not use a database, the data is all stored in the memory. If we don't use sticky-sessions, we'll encounter problems while using the API. For example, if we add a new foosball player through the API and then we try to get the list of existing players, we may not get the right results, depending on which server our request arrives.
+
+After enabling sticky sessions and testing using Bruno, we can see that we will always end up on the same server so the data stored on the server will stay coherent between our requests. However, if we wanted to do things correctly, we should be using another database server which contains all of our data to make sure that, no matter the server on which we operate, we always have the right data.
+
+todo add config
+
 ## Step 7
-todo
+
+
+todo show cert in docker compose config
+
+todo : show traefik.yaml config file
+
+
