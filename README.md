@@ -15,7 +15,7 @@ Here are the docker commands we used to build and run the container :
 
 We created a simple `docker-compose.yml` file that builds our `static-html-nginx` image and binds the web server's port `80` on the port `8080` of the host.
 
-We can build our infrastructure using `docker compose build` and start it using : `docker compose up` and stop it using `docker compose down` from a terminal opened in the root directory.
+We can build our infrastructure using `docker compose build`, start it using : `docker compose up` and stop it using `docker compose down` from a terminal opened in the root directory.
 
 ## Step 3
 
@@ -23,7 +23,7 @@ We can build our infrastructure using `docker compose build` and start it using 
 We created an API using the Javalin framework. The API is a simple CRUD API that manages a database of foosball players and matches.
 All the spec are documented in the [server-side-api-specs.md](server-side-api-specs.md) file.
 
-### Add dependencies
+### Dependencies
 If you want to run the API localy in your IDE, you will need to add the following dependencies to your project :
 ````
 io.javalin:javalin:5.6.3
@@ -43,7 +43,7 @@ We improve our docker-compose file to run both the API and the static web server
 
 ## Step 4
 We improve our docker-compose file with traefik to manage the routing between the API and the static web server.
-The static-server service and the api service had to be modified to use the traefik labels.
+The static-server service and the api service have to be modified to use the traefik labels.
 
 The traefik dashboard is also available at `http://localhost:8080/dashboard/`.
 
@@ -92,7 +92,11 @@ services:
 
 Traefik will by default detect if multiple instances of a service are running. In order to run multiple instances of the same service, you need to set the "replicas" tag the docker-compose to the number of your choice :
 
-todo add replicas config
+```
+static-server:
+  deploy:
+    replicas: 3
+```
 
 You can also specify the number of instances of each service when running the `--scale` parameter in the `docker compose up` command :
 
@@ -104,17 +108,90 @@ The load balancing between the running instances is done automatically by Traefi
 
 ## Step 6
 
-Our API does not use a database, the data is all stored in the memory. If we don't use sticky-sessions, we'll encounter problems while using the API. For example, if we add a new foosball player through the API and then we try to get the list of existing players, we may not get the right results, depending on which server our request arrives.
+Our API does not use a database, the data is all stored in the memory. This means that every instance of the API only has a copy of the data but there is no way for the instances to synchronise the data. If we don't use sticky-sessions, we'll encounter problems while using the API. For example, if we add a new foosball player through the API and then we try to get the list of existing players, we may not get the right results, depending on which server our request arrives.
 
-After enabling sticky sessions and testing using Bruno, we can see that we will always end up on the same server so the data stored on the server will stay coherent between our requests. However, if we wanted to do things correctly, we should be using another database server which contains all of our data to make sure that, no matter the server on which we operate, we always have the right data.
+After enabling sticky sessions and testing using Bruno, we can see that we will always end up on the same server so the data stored on the server will stay coherent between our requests. However, this would not necessarily be the case if we closed the connection and try to access the API again. To do things correctly, we should be using another database server which contains all of our data to make sure that, no matter the server on which we operate, the data always comes from the same source.
 
-todo add config
+```
+  foosball-api:
+    image: foosball-api
+    build: ./foosball-api
+    labels:
+      - "traefik.enable=true"
+      # Active la sticky-session
+      - "traefik.http.services.foosball-api.loadbalancer.sticky.cookie=true"
+      - "traefik.http.services.foosball-api.loadbalancer.sticky.cookie.name=my-sticky-cookie"
+```
 
 ## Step 7
 
+### Certificates config in docker compose
 
-todo show cert in docker compose config
+First, we created 2 files: a key and a certificate (using the SSL documentation linked in Tutorial.md). We then put these 2 files in a folder called `certs`. And then added this folder in the docker compose config file :
 
-todo : show traefik.yaml config file
+```
+  reverse-proxy:
+    image: traefik
+    ports:
+      - "80:80"
+      - "443:443"
+      - "8080:8080"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./certs:/etc/traefik/certificates
+      - ./config/traefik.yaml:/etc/traefik/traefik.yaml
+```
+
+Next, we had to create a traefik.yaml file to configure http and https. This also allowed use to move some of the labels from the docker-compose.yaml file to traefik.yaml :
+
+**traefik.yaml**
+```
+# Enable Docker as a provider
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+
+# Define entrypoints for http and https
+entryPoints:
+  http:
+    address: ":80"
+  https:
+    address: ":443"
+
+# Enable TLS configuration
+tls:
+  certificates:
+  - certFile: "/etc/traefik/certificates/cert.pem"
+    keyFile: "/etc/traefik/certificates/key.pem"
+
+# Enable API dashboard
+api:
+  insecure: true
+  dashboard: true
+
+```
+
+### Portainer
+
+We added portainer to our docker-compose config to manage and monitor our containers : 
+
+```
+  portainer:
+    image: portainer/portainer-ce
+    ports:
+      - "9000:9000"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainer_data:/data
+    restart: always
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.portainer.rule=Host(`portainer.localhost`)"
+      - "traefik.http.routers.portainer.entrypoints=https"
+      - "traefik.http.routers.portainer.tls=true"
+      - "traefik.http.routers.portainer-http.entrypoints=http"
+```
+
 
 
